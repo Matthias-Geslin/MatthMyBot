@@ -46,6 +46,6 @@ module.exports = {
         //devOnly: true,
         //userPermissions: ['Administrator'],
         //botPermissions: ['Administrator'],
-        deleted: false,
+        deleted: true,
     },
 };

@@ -7,15 +7,15 @@ module.exports = {
     },
  
     run: async ({ interaction, client, handler }) => {
-        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) return await interaction.reply({ content: "You don't have the perms to execute this command.", ephemeral: true });
+        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) return await interaction.reply({ content: "Vous n'avez pas les permissions pour éxécuter cette commande.", ephemeral: true });
 
-        interaction.reply(`Original message: ${interaction.targetMessage}.\nTranslated message: ...`);
+        interaction.reply(`Message original: ${interaction.targetMessage}.\nMessage traduit: ...`);
     },
  
     options: {
         devOnly: true,
         userPermissions: ['Administrator'],
         botPermissions: ['Administrator'],
-        deleted: false,
+        deleted: true,
     },
 };

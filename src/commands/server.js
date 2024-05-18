@@ -3,15 +3,15 @@ const { SlashCommandBuilder } = require('discord.js');
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('server')
-        .setDescription("Shows server's advanced informations."),
-    run: async ({ interaction, client, handler }) => {
+        .setDescription("Affiche d'avantages d'informations liées au serveurd discord."),
+    run: async ({ interaction }) => {
         await interaction.reply(`
-            Name: ${interaction.guild.name}\n
-            Member count: ${interaction.guild.memberCount}\n
+            Nom du serveur: ${interaction.guild.name}\n
+            Nombre de membres: ${interaction.guild.memberCount}\n
             Description : ${interaction.guild.description}\n
-            Channels : ${interaction.guild.channels.cache.size}\n
-            Creation : <t:${Math.floor(interaction.guild.createdTimestamp / 1000)}:R>\n
-            Roles : ${interaction.guild.roles.cache.sort((a, b) => b.position - a.position).map(r => r).join(",")}
+            Nombre de canaux au total: ${interaction.guild.channels.cache.size}\n
+            Date de création : <t:${Math.floor(interaction.guild.createdTimestamp / 1000)}:R>\n
+            Liste des rôles : ${interaction.guild.roles.cache.sort((a, b) => b.position - a.position).map(r => r).join(",")}
         `);
     },
     options: {

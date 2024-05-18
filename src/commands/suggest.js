@@ -6,7 +6,7 @@ const formatResults = require('../utils/formatResults');
 module.exports = {
     data: {
         name: 'suggest',
-        description:'Create a suggestion.',
+        description:'Créer une suggestion.',
         dm_permission: false,
     },
     run: async ({ interaction }) => {
@@ -15,23 +15,23 @@ module.exports = {
 
         if (!guildConfiguration?.suggestionChannelIds.length) {
             await interaction.reply(
-                'This server has not been configured to use suggestions yet.\nAsk an admin to run `/config-suggestions add` to set this up.');
+                "Ce serveur n'a pas encore été configuré aux suggestions.\nDemandez à un administrateur de lancer `/config-suggestions add` pour commencer la mise en place.");
             return;
         }
 
         if (!guildConfiguration.suggestionChannelIds.includes(interaction.channelId)) {
             await interaction.reply(
-                `This channel is not configured to use suggestions. Try one of these channels instead: ${guildConfiguration.suggestionChannelIds.map((id) => `<#${id}>`).join(',')}`
+                `Ce canal n'est pas configuré pour les suggestions. Essayez un de ceux là à la place: ${guildConfiguration.suggestionChannelIds.map((id) => `<#${id}>`).join(',')}`
             );
         }
 
         const modal = new ModalBuilder()
-            .setTitle('Create a suggestion')
+            .setTitle('Créer une suggestion')
             .setCustomId(`suggestion-${interaction.user.id}`);
 
         const textInput = new TextInputBuilder()
             .setCustomId('suggestion-input')
-            .setLabel('What would you like to suggest?')
+            .setLabel('Que souhaitez-vous suggérer ?')
             .setStyle(TextInputStyle.Paragraph)
             .setRequired(true)
             .setMaxLength(1000);
@@ -53,10 +53,10 @@ module.exports = {
         let suggestionMessage;
 
         try {
-            suggestionMessage = await interaction.channel.send('Creating suggestion, please wait ...');
+            suggestionMessage = await interaction.channel.send("Création de la suggestion, s'il vous plait patientez ...");
         } catch (error) {
             modalInteraction.editReply(
-                'Failed to create suggestion message in this channel. I may not have enough permissions.'
+                "Échec à la création de la suggestion dans ce canal. Je n'ai peut-être pas les permissions pour."
             );
             return;
         }
@@ -71,7 +71,7 @@ module.exports = {
 
         await newSuggestion.save();
 
-        modalInteraction.editReply('Suggestion created!');
+        modalInteraction.editReply('Suggestion créée!');
 
 
         // suggestion embed
@@ -83,7 +83,7 @@ module.exports = {
             })
             .addFields([
                 { name: 'Suggestion', value: suggestionText },
-                { name: 'Status', value:'⌛ Pending' },
+                { name: "État actuel", value:'⌛ En attente' },
                 { name: 'Votes', value: formatResults() }
             ])
             .setColor('Yellow')
@@ -91,25 +91,25 @@ module.exports = {
         //buttons 
         const upvoteButton = new ButtonBuilder()
             .setEmoji('👍')
-            .setLabel('Upvote')
+            .setLabel('Pour')
             .setStyle(ButtonStyle.Primary)
             .setCustomId(`suggestion.${newSuggestion.suggestionId}.upvote`);
 
             const downvoteButton = new ButtonBuilder()
             .setEmoji('👎')
-            .setLabel('Downvote')
+            .setLabel('Contre')
             .setStyle(ButtonStyle.Primary)
             .setCustomId(`suggestion.${newSuggestion.suggestionId}.downvote`);
 
             const approveButton = new ButtonBuilder()
             .setEmoji('✅')
-            .setLabel('Approve')
+            .setLabel('Approuver')
             .setStyle(ButtonStyle.Success)
             .setCustomId(`suggestion.${newSuggestion.suggestionId}.approve`);
 
             const rejectButton = new ButtonBuilder()
-            .setEmoji('❌')
-            .setLabel('Reject')
+            .setEmoji('🗑️')
+            .setLabel('Rejeter')
             .setStyle(ButtonStyle.Danger)
             .setCustomId(`suggestion.${newSuggestion.suggestionId}.reject`);
 
@@ -118,7 +118,7 @@ module.exports = {
             const secondRow = new ActionRowBuilder().addComponents(approveButton, rejectButton);
 
             suggestionMessage.edit({
-                content: `${interaction.user} Suggestion created!`,
+                content: `${interaction.user} Suggestion créée. Place aux votes ci dessous, Pour ou Contre.\nSelon l'avancée des votes, la suggestion sera validée ou non par @Matt.`,
                 embeds: [suggestionEmbed],
                 components: [firstRow, secondRow],
             });

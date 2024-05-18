@@ -18,22 +18,22 @@ module.exports = async (interaction) => {
 
         if (action === 'approve') {
             if (!interaction.memberPermissions.has('Administrator')) {
-                await interaction.editReply('You do not have permission to approve suggestions.');
+                await interaction.editReply("Vous n'avez pas la permission de valider la suggestion.");
                 return;
             }
             
             targetSuggestion.status = 'approved';
 
             targetMessageEmbed.data.color = 0x84e660;
-            targetMessageEmbed.fields[1].value = '✅ Approved';
+            targetMessageEmbed.fields[1].value = '✅ Validée';
             
             await targetSuggestion.save();
 
-            interaction.editReply('Suggestion approved!');
+            interaction.editReply('Suggestion validée!');
 
             targetMessage.edit({
                 embeds: [targetMessageEmbed],
-                components: [targetMessage.components[0]],
+                components: [],
             });
 
             return;
@@ -41,22 +41,22 @@ module.exports = async (interaction) => {
 
         if (action === 'reject') {
             if (!interaction.memberPermissions.has('Administrator')) {
-                await interaction.editReply('You do not have permission to reject suggestions.');
+                await interaction.editReply("Vous n'avez pas la permission pour rejeter la suggestion.");
                 return;
             }
 
             targetSuggestion.status = 'rejected';
 
             targetMessageEmbed.data.color = 0xff6161;
-            targetMessageEmbed.fields[1].value = '❌ Rejected';
+            targetMessageEmbed.fields[1].value = '🗑️ Rejetée';
             
             await targetSuggestion.save();
 
-            interaction.editReply('Suggestion rejected!');
+            interaction.editReply('Suggestion rejetée!');
 
             targetMessage.edit({
                 embeds: [targetMessageEmbed],
-                components: [targetMessage.components[0]],
+                components: [],
             });
 
             return;
@@ -66,7 +66,7 @@ module.exports = async (interaction) => {
             const hasVoted = targetSuggestion.upvotes.includes(interaction.user.id) || targetSuggestion.downvotes.includes(interaction.user.id);
 
             if (hasVoted) {
-                await interaction.editReply('You have already casted your vote for this suggestion.');
+                await interaction.editReply('Vous avez déjà voté pour cette suggestion.');
                 return;
             }
 
@@ -74,7 +74,7 @@ module.exports = async (interaction) => {
 
             await targetSuggestion.save();
 
-            interaction.editReply('Upvoted suggestion!');
+            interaction.editReply('Voté pour la suggestion!');
 
             targetMessageEmbed.fields[2].value = formatResults(
                 targetSuggestion.upvotes,
@@ -93,7 +93,7 @@ module.exports = async (interaction) => {
             const hasVoted = targetSuggestion.upvotes.includes(interaction.user.id) || targetSuggestion.downvotes.includes(interaction.user.id);
 
             if (hasVoted) {
-                await interaction.editReply('You have already casted your vote for this suggestion.');
+                await interaction.editReply('Vous avez déjà voté pour cette suggestion.');
                 return;
             }
 
@@ -101,7 +101,7 @@ module.exports = async (interaction) => {
 
             await targetSuggestion.save();
 
-            interaction.editReply('Downvoted suggestion!');
+            interaction.editReply('Voté contre la suggestion!');
 
             targetMessageEmbed.fields[2].value = formatResults(
                 targetSuggestion.upvotes,

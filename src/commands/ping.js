@@ -1,8 +1,8 @@
-const { SlashCommandBuilder } = require('discord.js');
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('ping')
-        .setDescription('Pong!'),
+    data: {
+        name: 'ping',
+        description: 'Send a Ping!'
+    },
     run: ({ interaction, client, handler }) => {
         interaction.reply('Pong!');
     },

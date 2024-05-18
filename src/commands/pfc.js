@@ -1,32 +1,32 @@
 const { ApplicationCommandOptionType, EmbedBuilder, ButtonBuilder, ActionRowBuilder, ButtonStyle } = require("discord.js");
 const choices = [
-    { name: 'Rock', emoji: '🪨', beats: 'Scissors'},
-    { name: 'Paper', emoji: '📄', beats: 'Rock'},
-    { name: 'Scissors', emoji: '✂️', beats: 'Paper'},
+    { name: 'Pierre', emoji: '🪨', beats: 'Ciseaux'},
+    { name: 'Feuille', emoji: '📄', beats: 'Pierre'},
+    { name: 'Ciseaux', emoji: '✂️', beats: 'Feuille'},
 ];
 
 module.exports = {
     data: {
-        name: 'rps',
-        description: 'Play rock paper scissors with another user',
+        name: 'pfc',
+        description: 'Pierre Feuille Ciseaux avec un autre joueur.',
         dm_persmission: false,
         options: [
             {
                 name: 'user',
-                description: "The user you want to play with.",
+                description: "Le membre avec qui vous voulez jouer.",
                 type: ApplicationCommandOptionType.User,
                 required: true,
             }
         ]
     },
  
-    run: async ({ interaction, client, handler }) => {
+    run: async ({ interaction }) => {
         try {
             const targetUser = interaction.options.getUser('user');
 
             if (interaction.user.id === targetUser.id) {
                 interaction.reply({
-                    content: 'You cannot play rock paper scissors with yourself.',
+                    content: 'Vous ne pouvez pas jouer avec vous même.',
                     ephemeral: true,
                 });
 
@@ -35,7 +35,7 @@ module.exports = {
 
             if (targetUser.bot) {
                 interaction.reply({
-                    content: 'You cannot play rock paper scissors with a bot',
+                    content: 'Vous ne pouvez pas jouer avec un bot.',
                     ephemeral: true,
                 });
 
@@ -43,8 +43,8 @@ module.exports = {
             }
 
             const embed = new EmbedBuilder()
-                .setTitle('Rock Paper Scissors')
-                .setDescription(`It's currently ${targetUser}'s turn.`)
+                .setTitle('Pierre Feuille Ciseaux')
+                .setDescription(`C'est le tour de: ${targetUser}.`)
                 .setColor('Yellow')
                 .setTimestamp(new Date())
 
@@ -59,7 +59,7 @@ module.exports = {
             const row = new ActionRowBuilder().addComponents(buttons);
 
             const reply = await interaction.reply({
-                content: `${targetUser}, you have been challenged to a game of Rock Paper Scissors, by ${interaction.user}. To start playing, click one of the buttons below.`,
+                content: `${targetUser}, vous avez été défié à une partie de Pierre Feuille Ciseaux, par ${interaction.user}.\nPour commencer à jouer, cliquez sur un bouton en dessous.`,
                 embeds: [embed],
                 components: [row],
             });
@@ -68,7 +68,7 @@ module.exports = {
                 filter: (i) => i.user.id === targetUser.id,
                 time: 30000,
             }).catch( async (error) => {
-                embed.setDescription(`Game over ${targetUser} did'nt respond in time.`);
+                embed.setDescription(`Perdu ..! ${targetUser} n'a pas répondu à temps.`);
                 await reply.edit({ embeds: [embed], components: [] });
             });
 
@@ -79,14 +79,14 @@ module.exports = {
             );
 
             await targetUserInteraction.reply({
-                content: `You picked ${targetUserChoice.name + targetUserChoice.emoji}`,
+                content: `Vous avez choisis ${targetUserChoice.name + targetUserChoice.emoji}`,
                 ephemeral: true,
             });
             
             // edit embed w/ updated user turn
-            embed.setDescription(`It's currently ${interaction.user}'s turn.`);
+            embed.setDescription(`C'est au tour de: ${interaction.user}.`);
             await reply.edit({
-                content: `${interaction.user} it's your turn now.`,
+                content: `${interaction.user} C'est votre tour maintenant.`,
                 embeds: [embed],
             });
 
@@ -94,7 +94,7 @@ module.exports = {
                 filter: (i) => i.user.id === interaction.user.id,
                 time: 30000,
             }).catch( async (error) => {
-                embed.setDescription(`Game over ${interaction.user} did'nt respond in time.`);
+                embed.setDescription(`Perdu ..! ${interaction.user} n'a pas répondu à temps.`);
                 await reply.edit({ embeds: [embed], components: [] });
             });
 
@@ -107,24 +107,24 @@ module.exports = {
             let result;
 
             if (targetUserChoice.beats === initialUserChoice.name) {
-                result = `${targetUser} won!`;
+                result = `${targetUser} Gagné!`;
             }
 
             if (initialUserChoice.beats === targetUserChoice.name) {
-                result = `${interaction.user} won!`;
+                result = `${interaction.user} Gagné!`;
             }
 
             if (targetUserChoice.beats === initialUserChoice.name) {
-                result = "It was a tie!";
+                result = "C'est une égalité!";
             }
 
             embed.setDescription(
-                `${targetUser} picked ${targetUserChoice.name + targetUserChoice.emoji}\n${interaction.user} picked ${initialUserChoice.name + initialUserChoice.emoji}\n\n ${result}.`
+                `${targetUser} à choisi ${targetUserChoice.name + targetUserChoice.emoji}\n${interaction.user} à choisi ${initialUserChoice.name + initialUserChoice.emoji}\n\n ${result}.`
             );
 
             reply.edit({ embeds: [embed], components: [] });
         } catch (error) {
-            console.log(`Error with /rps.`);
+            console.log(`Error with /pfc.`);
             console.error(error);
         }
 

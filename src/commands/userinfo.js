@@ -6,10 +6,10 @@ module.exports = {
         type: ApplicationCommandType.User,
     },
  
-    run: async ({ interaction, client, handler }) => {
-        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) return await interaction.reply({ content: "You don't have the perms to execute this command.", ephemeral: true });
+    run: async ({ interaction }) => {
+        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) return await interaction.reply({ content: "Vous n'avez pas les permissions pour éxécuter cette commande.", ephemeral: true });
 
-        interaction.reply(`Username: ${interaction.targetUser.username}\nID: ${interaction.targetUser.id}.\nUser tag: ${interaction.targetUser.tag}.`);
+        interaction.reply(`Nom d'utilisateur: ${interaction.targetUser.username}\nID: ${interaction.targetUser.id}.\nTag utilisateur: ${interaction.targetUser.tag}.`);
     },
  
     options: {
