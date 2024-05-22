@@ -1,51 +1,168 @@
-const { ApplicationCommandOptionType, Client, Interaction } = require("discord.js");
-const User = require('../../models/UserProfile');
+const { ApplicationCommandOptionType, AttachmentBuilder, Colors } = require("discord.js");
+const { Font, RankCardBuilder } = require('canvacord');
+const calculateLevelXp = require('../../utils/calculateLevelXp');
+const Level = require('../../models/Level');
 
 module.exports = {
     data: {
         name: 'level',
-        description: "See yours/someone else's level",
+        description: "Voir votre niveau ou celui d'un autre",
         options: [
             {
-                name: 'target-user',
-                description: "The user whose level you want to see.",
-                type: ApplicationCommandOptionType.Mentionable,
+                name: 'membre',
+                description: "Le membre dont vous souhaitez voir le niveau.",
+                type: ApplicationCommandOptionType.User,
             }
         ]
     },
  
-    run: async ({ interaction, client, handler }) => {
+    run: async ({ interaction, client }) => {
         if (!interaction.inGuild()) {
             interaction.reply({
-                content: 'You can only run this command inside a server.',
+                content: 'Vous ne pouvez lancer cette commande que dans un serveur.',
                 ephemeral: true,
             });
             return;
         }
 
-        const targetUserId = interaction.options.get('user')?.value || interaction.member.id;
-
         await interaction.deferReply();
 
-        const user = await User.findOne({ userId: targetUserId, guildId: interaction.guild.id });
+        const mentionedUserId = interaction.options.get('membre')?.value;
+        const targetUserId = mentionedUserId || interaction.member.id;
+        const targetUserObj = await interaction.guild.members.fetch(targetUserId);
 
-        if (!user) {
-            interaction.editReply(`<@${targetUserId}> doesn't have a profile yet.`);
+        const fetchedLevel = await Level.findOne({
+            userId: targetUserId,
+            guildId: interaction.guild.id,
+        });
+
+        if (!fetchedLevel) {
+            interaction.editReply(
+                mentionedUserId ? `${targetUserObj.user.tag} n'a pas de niveau encore. Réessayez quand il parlera un peu plus.` : `Vous n'avez pas de niveau encore. Parlez un peu plus & réessayez.`
+            );
             return;
         }
 
-        //user prof exists
-        interaction.reply(
-            targetUserId === interaction.member.id
-                ? `Your balance is **${user.balance}**.`
-                : `<@${targetUserId}>'s balance is **${user.balance}**.`
-        );
+        let allLevels = await Level.find({ guildId: interaction.guild.id }).select('-_id userId xp level');
+        
+        allLevels.sort((a, b) => {
+            if (a.level === b.level) {
+                return b.xp - a.xp;
+            } else {
+                return b.level - a.level;
+            }
+        });
+
+        let currentRank = allLevels.findIndex((lvl) => lvl.userId === targetUserId) + 1;
+
+        Font.loadDefault();
+
+        const rank = new RankCardBuilder()
+            .setDisplayName(targetUserObj.user.globalName)
+            .setUsername(targetUserObj.user.username)
+            .setAvatar(targetUserObj.user.displayAvatarURL({ size: 256 }))
+            .setRank(currentRank)
+            .setLevel(fetchedLevel.level)
+            .setCurrentXP(fetchedLevel.xp)
+            .setRequiredXP(calculateLevelXp(fetchedLevel.level))
+            .setOverlay(10)
+            //.setBackground("#23272a")
+            .setStatus(targetUserObj.presence.status)
+            .setTextStyles({
+                level: "NIVEAU :",
+                xp: "EXP :",
+                rank: "CLASSEMENT :",
+            })
+            .setStyles({
+                username: {
+                    handle: {
+                        style: {
+                            color: "#FFFFFF"
+                        }
+                    }
+                },
+                // block toutes infos à droite
+                container: {
+                    style: {
+                        backgroundColor: '#777e91'
+                    }
+                },
+                // style de la bordure ext
+                background: {
+                  style: {
+                    backgroundColor: '#334680'
+                  }  
+                },
+                // style fond int
+                overlay: {
+                    style: {
+                        backgroundColor: '#777e91'
+                    }
+                },
+                progressbar: {
+                    // barre xp remplie
+                    thumb: {
+                      style: {
+                        backgroundColor: '#163287'
+                      },
+                    },
+                    // barre xp non remplie
+                    track: {
+                      style: {
+                        backgroundColor: "#faa61a"
+                      },
+                    },
+                },
+                statistics: {
+                    container: {
+                        style: {
+                            backgroundColor: '#777e91'
+                        },
+                    },
+                    level: {
+                        container: {},
+                        text: {
+                            style: {
+                                color: "#163287"
+                            },
+                        },
+                        value: {},
+                    },
+                    rank: {
+                        container: {},
+                        text: {
+                            style: {
+                                color: "#163287"
+                            },
+                        },
+                        value: {},
+                    },
+                    xp: {
+                        container: {},
+                        text: {
+                            style: {
+                                color: "#163287"
+                            },
+                        },
+                        value: {},
+                    },
+                }
+            })
+            /*
+            
+            .setBackground("#23272a") // set background color or,
+            .setBackground("./path/to/image.png") // set background image
+            */
+
+            const data = await rank.build({ format: "png"});
+            const attachment = new AttachmentBuilder(data);
+            interaction.editReply({ files: [attachment] });
     },
  
     options: {
         //devOnly: true,
         //userPermissions: ['Administrator'],
         //botPermissions: ['Administrator'],
-        deleted: true,
+        deleted: false,
     },
 };
