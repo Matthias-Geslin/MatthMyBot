@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ChannelType, ChatInputCommandInteraction } = require('discord.js');
+const { SlashCommandBuilder, ChannelType, PermissionFlagsBits} = require('discord.js');
 const GuildConfiguration = require('../../models/GuildConfiguration');
 
 module.exports = {
@@ -6,6 +6,7 @@ module.exports = {
         .setName("config-suggestions")
         .setDescription("Configure suggestions.")
         .setDMPermission(false)
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
         .addSubcommand((subcommand) => 
             subcommand
             .setName('add')
@@ -69,6 +70,7 @@ module.exports = {
         }
     },
     options: {
-       userPermissions: ['Administrator']
-    }
+        devOnly: true,
+        userPermissions: ['Administrator'],
+    },
 }

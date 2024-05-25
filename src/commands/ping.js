@@ -4,6 +4,7 @@ module.exports = {
         description: 'Send a Ping!'
     },
     run: ({ interaction, client, handler }) => {
+        console.log(interaction.member.nickname);
         interaction.reply('Pong!');
     },
     options: {

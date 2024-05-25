@@ -28,7 +28,7 @@ module.exports = {
         await interaction.guild.members.kick(target);
     },
     options: {
-        //devOnly: false,
+        devOnly: true,
         userPermissions: ['KickMembers'],
         botPermissions: ['KickMembers'],
         //deleted: true

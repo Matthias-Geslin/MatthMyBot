@@ -6,12 +6,12 @@ const dailyAmount = 100;
 module.exports = {
     data: {
         name: "daily",
-        description: "Collect dailies!"
+        description: "Récuperer des crédits quotidien."
     },
     run: async ({ interaction }) => {
         if (!interaction.inGuild()) {
             interaction.reply({
-                content: "This command can only be executed inside a server.",
+                content: "Cette commande peut seulement être lancée dans un serveur.",
                 ephemeral: true,
             });
         }
@@ -28,7 +28,7 @@ module.exports = {
                 const currentDate = new Date().toDateString();
                 
                 if (lastDailyDate === currentDate) {
-                    interaction.editReply("You have already collected your dailies today. Come back tomorrow.");
+                    interaction.editReply("Vous avez déjà collectés vos crédits aujourd'hui. Revenez demain !");
                     return;
                 }
             } else {
@@ -42,7 +42,7 @@ module.exports = {
             await userProfile.save();
             
             interaction.editReply(
-                `${dailyAmount} was added to your balance.\nNew balance: ${userProfile.balance}`
+                `${dailyAmount} crédits ont été ajouté à votre compte.\nCrédits: ${userProfile.balance}`
             );
 
         } catch (error) {

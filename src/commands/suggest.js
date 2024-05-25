@@ -6,10 +6,10 @@ const formatResults = require('../utils/formatResults');
 module.exports = {
     data: {
         name: 'suggest',
-        description:'Créer une suggestion.',
+        description:'Créer une suggestion. À utiliser dans le canal de suggestion',
         dm_permission: false,
     },
-    run: async ({ interaction }) => {
+    run: async ({ interaction, client }) => {
        try {
         const guildConfiguration = await GuildConfiguration.findOne({ guildId: interaction.guildId });
 
@@ -32,6 +32,7 @@ module.exports = {
         const textInput = new TextInputBuilder()
             .setCustomId('suggestion-input')
             .setLabel('Que souhaitez-vous suggérer ?')
+            .setPlaceholder('Contenu du message à suggérer')
             .setStyle(TextInputStyle.Paragraph)
             .setRequired(true)
             .setMaxLength(1000);
@@ -60,10 +61,10 @@ module.exports = {
             );
             return;
         }
-
+        // interaction.options.getMember("nickname")
         const suggestionText = modalInteraction.fields.getTextInputValue('suggestion-input');
         const newSuggestion = new Suggestion({
-            authorId: interaction.user.id,
+            authorId: interaction.member.nickname,
             guildId: interaction.guildId,
             messageId: suggestionMessage.id,
             content: suggestionText,
@@ -75,10 +76,9 @@ module.exports = {
 
 
         // suggestion embed
-
         const suggestionEmbed = new EmbedBuilder()
             .setAuthor({
-                name: interaction.user.username,
+                name: interaction.user.displayName,
                 iconURL: interaction.user.displayAvatarURL({ size: 256 }),
             })
             .addFields([

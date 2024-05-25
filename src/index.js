@@ -7,6 +7,7 @@ const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildModeration,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildPresences,
         GatewayIntentBits.MessageContent,
@@ -20,7 +21,6 @@ new CommandKit({
     eventsPath: `${__dirname}/events`, //src/events
     commandsPath: `${__dirname}/commands`,
     validationsPath: `${__dirname}/validations`,
-    //devRoleIds: [''],
     bulkRegister: true,
     skipBuiltInValidations: true,
 });

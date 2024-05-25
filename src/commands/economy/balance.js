@@ -4,11 +4,11 @@ const UserProfile = require('../../models/UserProfile');
 module.exports = {
     data: {
         name: 'balance',
-        description: "See yours/someone else's balance",
+        description: "Voir vos crédits ou ceux de quelqu'un d'autre.",
         options: [
             {
-                name: 'target-user',
-                description: 'The user whose balance you want to get.',
+                name: 'membre',
+                description: 'Le membre dont vous souhaitez voir les crédits.',
                 type: ApplicationCommandOptionType.User,
             }
         ],
@@ -17,13 +17,13 @@ module.exports = {
     run: async ({ interaction }) => {
         if (!interaction.inGuild()) {
             interaction.reply({
-                content: 'You can only run this command inside a server.',
+                content: 'Cette commande peut seulement être lancée dans un serveur.',
                 ephemeral: true,
             });
             return;
         }
 
-        const targetUserId = interaction.options.getUser('target-user')?.id || interaction.user.id;
+        const targetUserId = interaction.options.getUser('membre')?.id || interaction.user.id;
 
         await interaction.deferReply();
 
@@ -35,7 +35,7 @@ module.exports = {
             }
             
             interaction.editReply(
-                targetUserId === interaction.user.id ? `Your balance is ${userProfile.balance}` : `<@${targetUserId}>'s balance is ${userProfile.balance}`
+                targetUserId === interaction.user.id ? `Vous avez ${userProfile.balance} crédits` : `<@${targetUserId}> à ${userProfile.balance} crédits.`
             );
         } catch (error) {
             console.log(`Error handling /balance: ${error}`);

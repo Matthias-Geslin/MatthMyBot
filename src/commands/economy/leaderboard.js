@@ -1,5 +1,5 @@
 const { ApplicationCommandOptionType, AttachmentBuilder, Colors } = require("discord.js");
-const { Font, RankCardBuilder } = require('canvacord');
+const { Font, LeaderboardBuilder } = require('canvacord');
 const calculateLevelXp = require('../../utils/calculateLevelXp');
 const Level = require('../../models/Level');
 
@@ -8,15 +8,8 @@ const Level = require('../../models/Level');
  */
 module.exports = {
     data: {
-        name: 'level',
-        description: "Voir votre niveau ou celui d'un autre",
-        options: [
-            {
-                name: 'membre',
-                description: "Le membre dont vous souhaitez voir le niveau.",
-                type: ApplicationCommandOptionType.User,
-            }
-        ]
+        name: 'leaderboard',
+        description: "Voir le leaderboard actuel.",
     },
  
     run: async ({ interaction, client }) => {
@@ -60,8 +53,26 @@ module.exports = {
 
         Font.loadDefault();
 
-        const rank = new RankCardBuilder()
-            .setDisplayName(targetUserObj.user.globalName)
+        const rank = new LeaderboardBuilder()
+            .setHeader({
+                title: '',
+                subtitle: '',
+                image: ''
+            })
+            .setPlayers([
+                {
+                    avatar: '',
+                    username: '',
+                    displayName: '',
+                    level: '',
+                    rank: '',
+                    xp: ''
+                },
+            ].forEach(element => {
+                
+            }))
+
+            /*.setDisplayName(targetUserObj.user.globalName)
             .setUsername(targetUserObj.user.username)
             .setAvatar(targetUserObj.user.displayAvatarURL({ size: 256 }))
             .setRank(currentRank)
@@ -151,12 +162,11 @@ module.exports = {
                     },
                 }
             })
-            /*
+        
             
             .setBackground("#23272a") // set background color or,
             .setBackground("./path/to/image.png") // set background image
             */
-            console.log(allLevels);
 
             const data = await rank.build({ format: "png"});
             const attachment = new AttachmentBuilder(data);

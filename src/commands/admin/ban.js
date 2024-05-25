@@ -60,7 +60,7 @@ module.exports = {
 
     },
     options: {
-        //devOnly: false,
+        devOnly: true,
         userPermissions: ['BanMembers'],
         botPermissions: ['BanMembers'],
         //deleted: true

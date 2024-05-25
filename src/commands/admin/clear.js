@@ -3,6 +3,7 @@ module.exports = {
     data: new SlashCommandBuilder()
         .setName('clear')
         .setDescription("Supprime un certain nombre de messages du canal de texte actuel.")
+        .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
         .addIntegerOption(option => option.setName('nombre').setDescription('Le nombre de messages à supprimer. Entre 1 & 100.').setMinValue(1).setMaxValue(100).setRequired(true)),
     run: async ({ interaction }) => {
         const amount = interaction.options.getInteger('nombre');

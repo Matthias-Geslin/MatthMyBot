@@ -10,12 +10,12 @@ function getRandomNumber(x,y) {
 module.exports = {
     data: {
         name: "beg",
-        description: "Beg to get extra credits."
+        description: "Supplier quelques crédits."
     },
     run: async ({ interaction }) => {
         if(!interaction.inGuild()) {
             await interaction.reply({
-                content: "You can only run this command inside a server",
+                content: "Cette commande peut seulement être lancée dans un serveur.",
                 ephemeral: true,
             });
             return;
@@ -26,6 +26,8 @@ module.exports = {
 
             const commandName = 'beg';
             const userId = interaction.user.id;
+            const chance = getRandomNumber(0,100);
+            const amount = getRandomNumber(1,20);
 
             let cooldown = await Cooldown.findOne({ userId, commandName });
 
@@ -33,7 +35,7 @@ module.exports = {
                 const { default: prettyMs } = await import('pretty-ms');
 
                 await interaction.editReply(
-                    `You are on cooldown, come back after ${prettyMs(cooldown.endsAt - Date.now())}`
+                    `Vous avez un cooldown, revenez après ${prettyMs(cooldown.endsAt - Date.now())}`
                 );
                 return;
             }
@@ -42,17 +44,13 @@ module.exports = {
                 cooldown = new Cooldown({ userId, commandName });
             }
 
-            const chance = getRandomNumber(0,100);
-
             if (chance < 40) {
-                await interaction.editReply("You didn't get anything this time. Try again later.");
+                await interaction.editReply("Vous n'avez rien eu cette fois. Réessayez plus tard.");
 
                 cooldown.endsAt = Date.now() + 300000; // 5 min in milisec
                 await cooldown.save();
                 return;
             }
-
-            const amount = getRandomNumber(10,50);
 
             let userProfile = await UserProfile.findOne({ userId }).select('userId balance');
 
@@ -65,7 +63,7 @@ module.exports = {
 
             await Promise.all([cooldown.save(), userProfile.save()]);
 
-            await interaction.editReply(`You got ${amount}!\nNew balance: ${userProfile.balance}`);
+            await interaction.editReply(`Vous avez reçu ${amount}!\nVous avez ${userProfile.balance} crédits.`);
         } catch (error) {
             console.log(`Error handling /beg: ${error}`);
         }
