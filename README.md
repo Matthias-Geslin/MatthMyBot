@@ -1,0 +1,2 @@
+# MatthMyBot
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/01cb7e9b107e481fb0c817e5be8078e1)](https://app.codacy.com/gh/Matthias-Geslin/MatthMyBot?utm_source=github.com&utm_medium=referral&utm_content=Matthias-Geslin/MatthMyBot&utm_campaign=Badge_Grade)
